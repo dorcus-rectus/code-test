@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31    
+Description: Sample SAM Template
+
+Resources:
+
+  ShowItemFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: show_item/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      MemorySize: 128
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: Test
+      Events:
+        GetResource:
+          Type: Api 
+          Properties:
+            Path: /show-item
+            Method: post
+            
+  TestTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Test
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S    
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
